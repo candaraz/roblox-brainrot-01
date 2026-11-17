@@ -270,6 +270,41 @@ local function pushStateToPlayer(player)
 	StateSync:FireClient(player, snapshot)
 end
 
+-- Spawns the player in front of their own base gate, facing the belt, so a
+-- fresh spawn never starts with the long walk across empty grass from the
+-- spawn platform. Runs on every CharacterAdded (join and respawn). When the
+-- player has no base (all 8 taken) or the layout is missing, it does nothing
+-- and the default SpawnLocation behaviour is kept.
+local function teleportCharacterToOwnBase(player, character, humanoid)
+	local state = GameState.GetState(player)
+	if state == nil or state.baseIndex == nil then
+		return
+	end
+	local gate = GameState.GetGatePart(state.baseIndex)
+	local centre = GameState.GetBaseCenter(state.baseIndex)
+	if gate == nil or centre == nil then
+		return
+	end
+	local rootPart = character:WaitForChild("HumanoidRootPart")
+	-- Bases sit on both sides of the belt, so the belt side is the direction
+	-- from the gate toward BELT_Z, and the spawn point sits 7 studs outside
+	-- the gate on that side, centred on the gate.
+	local beltDirection = 1
+	if gate.Position.Z > BrainrotCatalog.BELT_Z then
+		beltDirection = -1
+	end
+	-- The spawn point is on the grass outside the gate: the grass top sits
+	-- half the floor's thickness below the floor centre, and the root part
+	-- rides HipHeight plus half its own height above the ground, so the feet
+	-- rest exactly on the grass for any rig.
+	local groundY = centre.Y - 0.5
+	local rootY = groundY + humanoid.HipHeight + rootPart.Size.Y / 2
+	local spawnPosition = Vector3.new(gate.Position.X, rootY, gate.Position.Z + beltDirection * 7)
+	-- CFrame yaw 0 faces -Z and math.pi faces +Z: face the belt.
+	local yaw = beltDirection > 0 and math.pi or 0
+	character:PivotTo(CFrame.new(spawnPosition) * CFrame.Angles(0, yaw, 0))
+end
+
 local function onPlayerAdded(player)
 	local baseIndex = GameState.AssignBase(player)
 	if baseIndex ~= nil then
@@ -279,6 +314,7 @@ local function onPlayerAdded(player)
 	player.CharacterAdded:Connect(function(character)
 		local humanoid = character:WaitForChild("Humanoid")
 		humanoid.WalkSpeed = GameState.GetWalkSpeedFor(player)
+		teleportCharacterToOwnBase(player, character, humanoid)
 		giveRebirthStars(player)
 		humanoid.Died:Connect(function()
 			StealController.HandleCarrierLeaving(player)
