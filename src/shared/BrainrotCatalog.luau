@@ -281,17 +281,18 @@ BrainrotCatalog.BASE_COLORS = {
 
 -- Fallback base centres, used only if the static Bases folder cannot be read.
 -- The live game reads the real floor positions from the workspace instead.
--- Floor centres of the eight bases, in the compact market-square layout.
+-- Floor centres of the eight bases in the widened bazaar layout: pitch 44,
+-- 20 studs of open ground between adjacent 24-wide floors.
 -- Gates sit 11.5 studs belt-side of each centre, so gate Z is +/-18.5.
 BrainrotCatalog.BASE_CENTERS = {
-	{ x = -54, z = -30 },
-	{ x = -18, z = -30 },
-	{ x = 18, z = -30 },
-	{ x = 54, z = -30 },
-	{ x = -54, z = 30 },
-	{ x = -18, z = 30 },
-	{ x = 18, z = 30 },
-	{ x = 54, z = 30 },
+	{ x = -66, z = -30 },
+	{ x = -22, z = -30 },
+	{ x = 22, z = -30 },
+	{ x = 66, z = -30 },
+	{ x = -66, z = 30 },
+	{ x = -22, z = 30 },
+	{ x = 22, z = 30 },
+	{ x = 66, z = 30 },
 }
 
 local charactersById = {}
