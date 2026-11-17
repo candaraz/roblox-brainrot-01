@@ -13,8 +13,8 @@ BrainrotCatalog.BASE_COUNT = 8
 BrainrotCatalog.SLOTS_PER_BASE = 10
 BrainrotCatalog.BELT_SPAWN_SECONDS = 4
 BrainrotCatalog.BELT_SPEED = 6
-BrainrotCatalog.BELT_START_X = -140
-BrainrotCatalog.BELT_END_X = 140
+BrainrotCatalog.BELT_START_X = -90
+BrainrotCatalog.BELT_END_X = 90
 BrainrotCatalog.BELT_Z = 0
 BrainrotCatalog.BELT_TOP_Y = 1
 BrainrotCatalog.MAX_BELT_BRAINROTS = 12
@@ -281,15 +281,17 @@ BrainrotCatalog.BASE_COLORS = {
 
 -- Fallback base centres, used only if the static Bases folder cannot be read.
 -- The live game reads the real floor positions from the workspace instead.
+-- Floor centres of the eight bases, in the compact market-square layout.
+-- Gates sit 11.5 studs belt-side of each centre, so gate Z is +/-18.5.
 BrainrotCatalog.BASE_CENTERS = {
-	{ x = -105, z = -60 },
-	{ x = -35, z = -60 },
-	{ x = 35, z = -60 },
-	{ x = 105, z = -60 },
-	{ x = -105, z = 60 },
-	{ x = -35, z = 60 },
-	{ x = 35, z = 60 },
-	{ x = 105, z = 60 },
+	{ x = -54, z = -30 },
+	{ x = -18, z = -30 },
+	{ x = 18, z = -30 },
+	{ x = 54, z = -30 },
+	{ x = -54, z = 30 },
+	{ x = -18, z = 30 },
+	{ x = 18, z = 30 },
+	{ x = 54, z = 30 },
 }
 
 local charactersById = {}

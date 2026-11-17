@@ -324,6 +324,30 @@ function GameState.GetPityFlags()
 	return pityLegendary, pityMythic
 end
 
+-- Seconds until each pity timer fires for the player closest to it, from the
+-- same last-spawn timestamps GetPityFlags uses. Returns nil, nil when no
+-- player is in the server; 0 means that pity is already active. The
+-- countdown board shows these values live; nothing here is estimated.
+function GameState.GetPityCountdowns()
+	local now = os.clock()
+	local legendaryRemaining = nil
+	local mythicRemaining = nil
+	for _, state in pairs(playerStates) do
+		local legendaryLeft = BrainrotCatalog.PITY_LEGENDARY_SECONDS - (now - state.lastLegendaryAt)
+		local mythicLeft = BrainrotCatalog.PITY_MYTHIC_SECONDS - (now - state.lastMythicAt)
+		if legendaryRemaining == nil or legendaryLeft < legendaryRemaining then
+			legendaryRemaining = legendaryLeft
+		end
+		if mythicRemaining == nil or mythicLeft < mythicRemaining then
+			mythicRemaining = mythicLeft
+		end
+	end
+	if legendaryRemaining == nil then
+		return nil, nil
+	end
+	return math.max(0, legendaryRemaining), math.max(0, mythicRemaining)
+end
+
 function GameState.LoadBaseLayout()
 	local basesFolder = Workspace:FindFirstChild("Bases")
 	if basesFolder == nil then

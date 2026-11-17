@@ -20,6 +20,10 @@ local TsunamiController = {}
 
 local waveRunning = false
 local lastHitAt = {}
+-- The os.clock() moment the loop's next scheduled wave fires. The countdown
+-- board above the belt reads it; nil until the loop starts, which the getter
+-- reports as the full first-wave delay.
+local nextWaveAt = nil
 
 local function getHumanoidRootPart(player)
 	local character = player.Character
@@ -140,12 +144,24 @@ end
 
 function TsunamiController.StartTsunamiLoop()
 	task.spawn(function()
+		nextWaveAt = os.clock() + BrainrotCatalog.TSUNAMI_FIRST_SECONDS
 		task.wait(BrainrotCatalog.TSUNAMI_FIRST_SECONDS)
 		while true do
 			TsunamiController.TriggerTsunamiWave()
+			nextWaveAt = os.clock() + BrainrotCatalog.TSUNAMI_EVERY_SECONDS
 			task.wait(BrainrotCatalog.TSUNAMI_EVERY_SECONDS)
 		end
 	end)
+end
+
+-- Seconds until the loop's next scheduled wave. During a wave this keeps
+-- counting toward the following one; callers show the wave state instead
+-- while IsWaveRunning() is true.
+function TsunamiController.GetSecondsUntilNextWave()
+	if nextWaveAt == nil then
+		return BrainrotCatalog.TSUNAMI_FIRST_SECONDS
+	end
+	return math.max(0, nextWaveAt - os.clock())
 end
 
 function TsunamiController.IsWaveRunning()
